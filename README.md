@@ -1,0 +1,1 @@
+# simple-correlation-factanal-exercise
