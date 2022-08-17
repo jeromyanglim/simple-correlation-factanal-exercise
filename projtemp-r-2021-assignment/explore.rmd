@@ -1,0 +1,61 @@
+# Initialise Project
+```{r adjust_directory_if_needed}
+# Uncomment lines below if rmd file is placed in a subdirectory
+# library(knitr)
+# opts_knit$set(root.dir = normalizePath('../')) 
+```
+
+```{r load_project}
+# 1. Set options in config/global.dcf
+# 2. Load packages listed in config/global.dcf
+# 3. Import functions and coe in lib directory
+# 4. Load data in data directory
+# 5. Run data manipulations in munge directory 
+
+rm(list = ls()) # optionally refresh workspace
+library(ProjectTemplate); load.project()
+```             
+
+# Factor Analysis
+```{r}
+# run analyses
+scree(rcases[,v$hexaco_facets])
+
+fit <- factanal(rcases[,v$hexaco_facets], 6, rotation = "promax")
+print(fit, cutoff = .3)
+```
+
+# Correlations
+```{r}
+cormat <- round(cor(rcases[,v$hexaco_all], rcases[ v$traitei]), 2)
+cormat
+
+write.csv(cormat, file = "output/cormat.csv")
+
+```
+
+# Gender differences
+```{r}
+summary(lm(emotionality ~ gender, rcases))
+
+t.test(honestyhumility ~ gender, rcases)
+t.test(emotionality ~ gender, rcases)
+t.test(extraversion ~ gender, rcases)
+
+gentab <- data.frame(
+    mean_male = sapply(rcases[rcases$gender == "male" ,v$hexaco_all], mean),
+    sd_male = sapply(rcases[rcases$gender == "male" ,v$hexaco_all], sd),
+    mean_female = sapply(rcases[rcases$gender == "female" ,v$hexaco_all], mean),
+    sd_female = sapply(rcases[rcases$gender == "female" ,v$hexaco_all], sd))
+
+gentab$d <- (gentab$mean_female - gentab$mean_male) / gentab$sd_male
+
+round(gentab, 2)
+```
+
+
+
+
+
+
+
